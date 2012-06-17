@@ -1,11 +1,3 @@
-//
-//  ViewController.m
-//  PickerView
-//
-//  Created by Fraerman Arkady on 24.11.11.
-//  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
-//
-
 #import "ViewController.h"
 
 @implementation ViewController
@@ -15,9 +7,6 @@
 @synthesize numberLabel;
 @synthesize dayLabel;
 
-
-
-
 #pragma mark - View lifecycle
 
 - (void)viewDidLoad {
@@ -26,7 +15,7 @@
 
     daysData = [[NSArray alloc] initWithObjects:@"Monday", @"Tuesday", @"Wednesday", @"Thursday", @"Friday", @"Saturday", @"Sunday", nil];
 
-    defaultPickerView = [[AFPickerView alloc] initWithFrame:CGRectMake(0,0,320,216)];
+    defaultPickerView = [[AFPickerView alloc] initWithFrame:CGRectMake(0,0,320,216) backgroundImage:@"PickerBG.png" shadowImage:@"PickerShadow.png" glassImage:@"PickerGlass.png"];
     defaultPickerView.dataSource = self;
     defaultPickerView.delegate = self;
     [defaultPickerView reloadData];

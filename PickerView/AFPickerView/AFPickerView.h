@@ -32,7 +32,7 @@
 @property (nonatomic, strong) UIFont *rowFont;
 @property (nonatomic, unsafe_unretained) CGFloat rowIndent;
 
-
+- (id)initWithFrame:(CGRect)frame backgroundImage:(NSString *)backgroundImage shadowImage:(NSString *)shadowImage glassImage:(NSString *)glassImage;
 - (void)setup;
 - (void)reloadData;
 - (void)determineCurrentRow;
