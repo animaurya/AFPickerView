@@ -1,5 +1,5 @@
 Pod::Spec.new do |s|
-  s.name     = 'AFPicker'
+  s.name     = 'AFPickerView'
   s.version  = '0.1'
   s.summary  = 'Custom UIPickerView controller reconstruction allows you to customize the graphics'
   s.homepage = 'https://github.com/fanyuanheng/AFPickerView'
