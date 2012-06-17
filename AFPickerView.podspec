@@ -5,5 +5,5 @@ Pod::Spec.new do |s|
   s.homepage = 'https://github.com/fanyuanheng/AFPickerView'
   s.source   = { :git => 'https://github.com/fanyuanheng/AFPickerView.git' }
 
-  s.source_files = 'PickerView.*'
+  s.source_files = 'PickerView/AFPickerView/*'
 end
