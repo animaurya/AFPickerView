@@ -1,11 +1,3 @@
-//
-//  AFPickerView.m
-//  PickerView
-//
-//  Created by Fraerman Arkady on 24.11.11.
-//  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
-//
-
 #import "AFPickerView.h"
 
 @implementation AFPickerView
@@ -18,9 +10,6 @@
 @synthesize rowFont = _rowFont;
 @synthesize rowIndent = _rowIndent;
 
-
-
-
 #pragma mark - Custom getters/setters
 
 - (void)setSelectedRow:(int)selectedRow
@@ -31,9 +20,6 @@
     currentRow = selectedRow;
     [contentView setContentOffset:CGPointMake(0.0, 39.0 * currentRow) animated:NO];
 }
-
-
-
 
 - (void)setRowFont:(UIFont *)rowFont
 {
@@ -49,9 +35,6 @@
         aLabel.font = _rowFont;
     }
 }
-
-
-
 
 - (void)setRowIndent:(CGFloat)rowIndent
 {
@@ -74,9 +57,6 @@
     }
 }
 
-
-
-
 #pragma mark - Initialization
 
 - (id)initWithFrame:(CGRect)frame
@@ -84,53 +64,42 @@
     self = [super initWithFrame:frame];
     if (self) 
     {
-        // setup
         [self setup];
+
+        UIImageView *background = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"PickerBG.png"]];
+        [self addSubview:background];
         
-        // backgound
-        UIImageView *bacground = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"pickerBackground.png"]];
-        [self addSubview:bacground];
-        
-        // content
-        contentView = [[UIScrollView alloc] initWithFrame:CGRectMake(0.0, 0.0, frame.size.width, frame.size.height)];
+        UIImageView *shadows = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"PickerShadow.png"]];
+        [self addSubview:shadows];
+
+        UIImage *glassImage = [UIImage imageNamed:@"PickerGlass.png"];
+        glassImageView = [[UIImageView alloc] initWithFrame:CGRectMake(36, 100.0, glassImage.size.width, glassImage.size.height)];
+        glassImageView.image = glassImage;
+        [self addSubview:glassImageView];
+
+        contentView = [[UIScrollView alloc] initWithFrame:CGRectMake(0.0, 25, frame.size.width, frame.size.height - 25)];
         contentView.showsHorizontalScrollIndicator = NO;
         contentView.showsVerticalScrollIndicator = NO;
         contentView.delegate = self;
         [self addSubview:contentView];
-        
+
         UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTap:)];
         [contentView addGestureRecognizer:tapRecognizer];
-        
-        
-        // shadows
-        UIImageView *shadows = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"pickerShadows.png"]];
-        [self addSubview:shadows];
-        
-        // glass
-        UIImage *glassImage = [UIImage imageNamed:@"pickerGlass.png"];
-        glassImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0.0, 76.0, glassImage.size.width, glassImage.size.height)];
-        glassImageView.image = glassImage;
-        [self addSubview:glassImageView];
     }
     return self;
 }
 
 
-
-
 - (void)setup
 {
     _rowFont = [UIFont boldSystemFontOfSize:24.0];
-    _rowIndent = 30.0;
+    _rowIndent = 50.0;
     
     currentRow = 0;
     rowsCount = 0;
     visibleViews = [[NSMutableSet alloc] init];
     recycledViews = [[NSMutableSet alloc] init];
 }
-
-
-
 
 #pragma mark - Buisness
 
@@ -155,9 +124,6 @@
     [self tileViews];
 }
 
-
-
-
 - (void)determineCurrentRow
 {
     CGFloat delta = contentView.contentOffset.y;
@@ -167,9 +133,6 @@
     [delegate pickerView:self didSelectRow:currentRow];
 }
 
-
-
-
 - (void)didTap:(id)sender
 {
     UITapGestureRecognizer *tapRecognizer = (UITapGestureRecognizer *)sender;
@@ -177,9 +140,6 @@
     int steps = floor(point.y / 39) - 2;
     [self makeSteps:steps];
 }
-
-
-
 
 - (void)makeSteps:(int)steps
 {
@@ -204,9 +164,6 @@
     [delegate pickerView:self didSelectRow:currentRow];
 }
 
-
-
-
 #pragma mark - recycle queue
 
 - (UIView *)dequeueRecycledView
@@ -217,8 +174,6 @@
         [recycledViews removeObject:aView];
     return aView;
 }
-
-
 
 - (BOOL)isDisplayingViewForIndex:(NSUInteger)index
 {
@@ -234,9 +189,6 @@
     }
     return foundPage;
 }
-
-
-
 
 - (void)tileViews
 {
@@ -282,9 +234,6 @@
     }
 }
 
-
-
-
 - (void)configureView:(UIView *)view atIndex:(NSUInteger)index
 {
     UILabel *label = (UILabel *)view;
@@ -294,9 +243,6 @@
     label.frame = frame;
 }
 
-
-
-
 #pragma mark - UIScrollViewDelegate
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
@@ -304,17 +250,11 @@
     [self tileViews];
 }
 
-
-
-
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
 {
     if (!decelerate)
         [self determineCurrentRow];
 }
-
-
-
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {

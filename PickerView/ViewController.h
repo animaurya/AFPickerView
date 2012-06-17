@@ -12,7 +12,6 @@
 @interface ViewController : UIViewController <AFPickerViewDataSource, AFPickerViewDelegate>
 {
     AFPickerView *defaultPickerView;
-    AFPickerView *daysPickerView;
     NSArray *daysData;
 }
 
