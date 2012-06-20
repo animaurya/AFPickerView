@@ -30,6 +30,7 @@
 @property(nonatomic, unsafe_unretained) int selectedRow;
 @property(nonatomic, strong) UIFont *rowFont;
 @property(nonatomic, unsafe_unretained) CGFloat rowIndent;
+@property(nonatomic, unsafe_unretained) BOOL isHidden;
 
 - (id)initWithFrame:(CGRect)frame backgroundImage:(NSString *)backgroundImage shadowImage:(NSString *)shadowImage glassImage:(NSString *)glassImage;
 

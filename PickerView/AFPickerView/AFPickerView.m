@@ -12,6 +12,7 @@
 
 @synthesize dataSource;
 @synthesize delegate;
+@synthesize isHidden;
 @synthesize selectedRow = currentRow;
 @synthesize rowFont = _rowFont;
 @synthesize rowIndent = _rowIndent;
@@ -69,6 +70,7 @@
 {
     self = [super initWithFrame:frame];
     self.frame = CGRectMake(0, self.frame.origin.y + self.frame.size.height, self.frame.size.width, self.frame.size.height);
+    self.isHidden = YES;
     if (self)
     {
         [self setup];
@@ -263,15 +265,21 @@
 
 #pragma mark - Picker Trigger
 - (void)hidePicker {
-    [UIView animateWithDuration:0.3 animations:^(void) {
-        self.frame = CGRectMake(0, self.frame.origin.y + self.frame.size.height, self.frame.size.width, self.frame.size.height);
-    }];
+    if (!isHidden) {
+        [UIView animateWithDuration:0.3 animations:^(void) {
+            self.frame = CGRectMake(0, self.frame.origin.y + self.frame.size.height, self.frame.size.width, self.frame.size.height);
+        }];
+        self.isHidden = YES;
+    }
 }
 
 - (void)showPicker {
-    [UIView animateWithDuration:0.3 animations:^(void) {
-        self.frame = CGRectMake(0, self.frame.origin.y - self.frame.size.height, self.frame.size.width, self.frame.size.height);
-    }];
+    if (isHidden) {
+        [UIView animateWithDuration:0.3 animations:^(void) {
+            self.frame = CGRectMake(0, self.frame.origin.y - self.frame.size.height, self.frame.size.width, self.frame.size.height);
+        }];
+        self.isHidden = NO;
+    }
 }
 
 

@@ -18,7 +18,7 @@
 #pragma mark - AFPickerViewDataSource
 
 - (NSInteger)numberOfRowsInPickerView:(AFPickerView *)pickerView {
-    return 100;
+    return 15;
 }
 
 
