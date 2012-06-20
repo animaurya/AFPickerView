@@ -9,7 +9,6 @@
     __unsafe_unretained id <AFPickerViewDataSource> dataSource;
     __unsafe_unretained id <AFPickerViewDelegate> delegate;
     UIScrollView *contentView;
-    UIImageView *glassImageView;
 
     int currentRow;
     int rowsCount;
@@ -32,7 +31,7 @@
 @property(nonatomic, unsafe_unretained) CGFloat rowIndent;
 @property(nonatomic, unsafe_unretained) BOOL isHidden;
 
-- (id)initWithFrame:(CGRect)frame backgroundImage:(NSString *)backgroundImage shadowImage:(NSString *)shadowImage glassImage:(NSString *)glassImage;
+- (id)initWithFrame:(CGRect)frame backgroundImage:(NSString *)backgroundImage shadowImage:(NSString *)shadowImage glassImage:(NSString *)glassImage title:(NSString *)title;
 
 - (void)setup;
 

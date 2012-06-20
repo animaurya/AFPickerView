@@ -6,7 +6,7 @@
 
 - (IBAction)triggerPicker {
     if (defaultPickerView == nil) {
-        defaultPickerView = [[AFPickerView alloc] initWithFrame:CGRectMake(0,245,320,216) backgroundImage:@"PickerBG.png" shadowImage:@"PickerShadow.png" glassImage:@"PickerGlass.png"];
+        defaultPickerView = [[AFPickerView alloc] initWithFrame:CGRectMake(0,245,320,216) backgroundImage:@"PickerBG.png" shadowImage:@"PickerShadow.png" glassImage:@"PickerGlass.png" title:@"AFPicker"];
         defaultPickerView.dataSource = self;
         defaultPickerView.delegate = self;
         [self.view addSubview:defaultPickerView];

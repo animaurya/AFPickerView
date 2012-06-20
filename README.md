@@ -4,4 +4,4 @@
 * Picker Animation
 * Picker Toolbar
 * Cocoapod compatiable
-`dependency 'AFPickerView', :git => 'https://github.com/fanyuanheng/AFPickerView.git', :tag => '0.21'`
+`dependency 'AFPickerView', :git => 'https://github.com/fanyuanheng/AFPickerView.git', :tag => '0.3'`

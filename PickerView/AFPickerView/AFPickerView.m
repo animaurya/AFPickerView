@@ -1,9 +1,20 @@
+#import <CoreGraphics/CoreGraphics.h>
 #import "AFPickerView.h"
 
 #define RGBACOLOR(r,g,b,a) [UIColor colorWithRed:(r)/255.0 green:(g)/255.0 blue:(b)/255.0 alpha:(a)]
 #define ROW_SPACE 39.0
 #define CONTENT_OFFSET_Y 20
 #define TOOLBAR_HEIGHT 44
+#define TOOLBAR_TITLE_WIDTH_OFFSET 80
+
+@interface AFPickerView()
+- (UIBarButtonItem *)toolbarTitleItem:(NSString *)title;
+- (UIToolbar *)toolbar:(NSString *)title;
+- (UIImageView *)backgroundView:(NSString *)imageURL;
+- (UIImageView *)shadowView:(NSString *)imageURL;
+- (UIImageView *)glassView:(NSString *)imageURL;
+- (void)initContentView;
+@end
 
 @implementation AFPickerView
 
@@ -65,45 +76,19 @@
 
 #pragma mark - Initialization
 
-- (id)initWithFrame:(CGRect)frame backgroundImage:(NSString *)backgroundImage shadowImage:(NSString *)shadowImage glassImage:(NSString *)glassImage
-{
+- (id)initWithFrame:(CGRect)frame backgroundImage:(NSString *)backgroundImage shadowImage:(NSString *)shadowImage glassImage:(NSString *)glassImage title:(NSString *)title {
     self = [super initWithFrame:frame];
     self.frame = CGRectMake(0, self.frame.origin.y + self.frame.size.height, self.frame.size.width, self.frame.size.height);
     self.isHidden = YES;
     if (self)
     {
         [self setup];
-
-        UIToolbar *toolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, TOOLBAR_HEIGHT)];
-        toolbar.tintColor = RGBACOLOR(255, 144, 39, 1);
-        UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStyleDone target:nil action:@selector(hidePicker)];
-        UIBarButtonItem *placeHolderButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
-        [toolbar setItems:[NSArray arrayWithObjects:placeHolderButton, doneButton, nil]];
-        [self addSubview:toolbar];
-
-        UIImage *bgImage = [UIImage imageNamed:backgroundImage];
-        UIImageView *background = [[UIImageView alloc] initWithFrame:CGRectMake(0, TOOLBAR_HEIGHT, frame.size.width, frame.size.height - TOOLBAR_HEIGHT)];
-        background.image = bgImage;
-        [self addSubview:background];
-
-        UIImage *shadowImg = [UIImage imageNamed:shadowImage];
-        UIImageView *shadows = [[UIImageView alloc] initWithFrame:CGRectMake(0, TOOLBAR_HEIGHT, frame.size.width, frame.size.height - TOOLBAR_HEIGHT)];
-        shadows.image = shadowImg;
-        [self addSubview:shadows];
-
-        UIImage *glass = [UIImage imageNamed:glassImage];
-        glassImageView = [[UIImageView alloc] initWithFrame:CGRectMake(36, 115.0, glass.size.width, glass.size.height)];
-        glassImageView.image = glass;
-        [self addSubview:glassImageView];
-
-        contentView = [[UIScrollView alloc] initWithFrame:CGRectMake(0.0, 60, frame.size.width, frame.size.height - 70)];
-        contentView.showsHorizontalScrollIndicator = NO;
-        contentView.showsVerticalScrollIndicator = NO;
-        contentView.delegate = self;
+        [self addSubview:[self toolbar:title]];
+        [self addSubview:[self backgroundView:backgroundImage]];
+        [self addSubview:[self shadowView:shadowImage]];
+        [self addSubview:[self glassView:glassImage]];
+        [self initContentView];
         [self addSubview:contentView];
-
-        UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTap:)];
-        [contentView addGestureRecognizer:tapRecognizer];
     }
     return self;
 }
@@ -298,6 +283,55 @@
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
     [self determineCurrentRow];
+}
+
+#pragma mark - Private Methods
+- (UIBarButtonItem *)toolbarTitleItem:(NSString *)title {
+    UILabel *toolbarTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0.0 , 11.0, self.frame.size.width - TOOLBAR_TITLE_WIDTH_OFFSET, 21.0)];
+    toolbarTitleLabel.text = title;
+    toolbarTitleLabel.backgroundColor = [UIColor clearColor];
+    toolbarTitleLabel.font = [UIFont fontWithName:@"Helvetica-Bold" size:18];
+    toolbarTitleLabel.textColor = RGBACOLOR(255, 255, 255, 1);
+    return [[UIBarButtonItem alloc] initWithCustomView:toolbarTitleLabel];
+}
+
+- (UIToolbar *)toolbar:(NSString *)title {
+    UIToolbar *toolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width, TOOLBAR_HEIGHT)];
+    toolbar.tintColor = RGBACOLOR(255, 144, 39, 1);
+    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStyleDone target:nil action:@selector(hidePicker)];
+    UIBarButtonItem *placeHolderButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+    [toolbar setItems:[NSArray arrayWithObjects:[self toolbarTitleItem:title], placeHolderButton, doneButton, nil]];
+    return toolbar;
+}
+
+- (UIImageView *)backgroundView:(NSString *)imageURL {
+    UIImage *bgImage = [UIImage imageNamed:imageURL];
+    UIImageView *bgImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, TOOLBAR_HEIGHT, self.frame.size.width, self.frame.size.height - TOOLBAR_HEIGHT)];
+    bgImageView.image = bgImage;
+    return bgImageView;
+}
+
+- (UIImageView *)shadowView:(NSString *)imageURL {
+    UIImage *shadowImage = [UIImage imageNamed:imageURL];
+    UIImageView *shadowImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, TOOLBAR_HEIGHT, self.frame.size.width, self.frame.size.height - TOOLBAR_HEIGHT)];
+    shadowImageView.image = shadowImage;
+    return shadowImageView;
+}
+
+- (UIImageView *)glassView:(NSString *)imageURL {
+    UIImage *glassImage = [UIImage imageNamed:imageURL];
+    UIImageView *glassImageView = [[UIImageView alloc] initWithFrame:CGRectMake(36, 115.0, glassImage.size.width, glassImage.size.height)];
+    glassImageView.image = glassImage;
+    return glassImageView;
+}
+
+- (void)initContentView {
+    contentView = [[UIScrollView alloc] initWithFrame:CGRectMake(0.0, 60, self.frame.size.width, self.frame.size.height - 70)];
+    contentView.showsHorizontalScrollIndicator = NO;
+    contentView.showsVerticalScrollIndicator = NO;
+    contentView.delegate = self;
+    UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTap:)];
+    [contentView addGestureRecognizer:tapRecognizer];
 }
 
 #pragma mark - Override Initializers
