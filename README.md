@@ -1,1 +1,6 @@
-Customized AFPickerView for GM
+# GM AFPickerView
+
+* Parameterized images 
+* Picker Animation
+* Picker Toolbar
+
