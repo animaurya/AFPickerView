@@ -1,6 +1,10 @@
+#import <CoreGraphics/CoreGraphics.h>
 #import "AFPickerView.h"
 
 #define RGBACOLOR(r,g,b,a) [UIColor colorWithRed:(r)/255.0 green:(g)/255.0 blue:(b)/255.0 alpha:(a)]
+#define ROW_SPACE 39.0
+#define CONTENT_OFFSET_Y 20
+#define TOOLBAR_HEIGHT 44
 
 @implementation AFPickerView
 
@@ -20,7 +24,7 @@
         return;
 
     currentRow = selectedRow;
-    [contentView setContentOffset:CGPointMake(0.0, 39.0 * currentRow) animated:NO];
+    [contentView setContentOffset:CGPointMake(0.0, ROW_SPACE * currentRow) animated:NO];
 }
 
 - (void)setRowFont:(UIFont *)rowFont
@@ -64,22 +68,34 @@
 - (id)initWithFrame:(CGRect)frame backgroundImage:(NSString *)backgroundImage shadowImage:(NSString *)shadowImage glassImage:(NSString *)glassImage
 {
     self = [super initWithFrame:frame];
+    self.frame = CGRectMake(0, self.frame.origin.y + self.frame.size.height, self.frame.size.width, self.frame.size.height);
     if (self)
     {
         [self setup];
 
-        UIImageView *background = [[UIImageView alloc] initWithImage:[UIImage imageNamed:backgroundImage]];
+        UIToolbar *toolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, TOOLBAR_HEIGHT)];
+        toolbar.tintColor = RGBACOLOR(255, 144, 39, 1);
+        UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStyleDone target:nil action:@selector(hidePicker)];
+        UIBarButtonItem *placeHolderButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+        [toolbar setItems:[NSArray arrayWithObjects:placeHolderButton, doneButton, nil]];
+        [self addSubview:toolbar];
+
+        UIImage *bgImage = [UIImage imageNamed:backgroundImage];
+        UIImageView *background = [[UIImageView alloc] initWithFrame:CGRectMake(0, TOOLBAR_HEIGHT, frame.size.width, frame.size.height - TOOLBAR_HEIGHT)];
+        background.image = bgImage;
         [self addSubview:background];
 
-        UIImageView *shadows = [[UIImageView alloc] initWithImage:[UIImage imageNamed:shadowImage]];
+        UIImage *shadowImg = [UIImage imageNamed:shadowImage];
+        UIImageView *shadows = [[UIImageView alloc] initWithFrame:CGRectMake(0, TOOLBAR_HEIGHT, frame.size.width, frame.size.height - TOOLBAR_HEIGHT)];
+        shadows.image = shadowImg;
         [self addSubview:shadows];
 
         UIImage *glass = [UIImage imageNamed:glassImage];
-        glassImageView = [[UIImageView alloc] initWithFrame:CGRectMake(36, 100.0, glass.size.width, glass.size.height)];
+        glassImageView = [[UIImageView alloc] initWithFrame:CGRectMake(36, 115.0, glass.size.width, glass.size.height)];
         glassImageView.image = glass;
         [self addSubview:glassImageView];
 
-        contentView = [[UIScrollView alloc] initWithFrame:CGRectMake(0.0, 25, frame.size.width, frame.size.height - 25)];
+        contentView = [[UIScrollView alloc] initWithFrame:CGRectMake(0.0, 60, frame.size.width, frame.size.height - 70)];
         contentView.showsHorizontalScrollIndicator = NO;
         contentView.showsVerticalScrollIndicator = NO;
         contentView.delegate = self;
@@ -121,17 +137,17 @@
     recycledViews = [[NSMutableSet alloc] init];
 
     rowsCount = [dataSource numberOfRowsInPickerView:self];
-    [contentView setContentOffset:CGPointMake(0.0, 0.0) animated:NO];
-    contentView.contentSize = CGSizeMake(contentView.frame.size.width, 39.0 * rowsCount + 4 * 39.0);
+    [contentView setContentOffset:CGPointMake(0.0, CONTENT_OFFSET_Y) animated:NO];
+    contentView.contentSize = CGSizeMake(contentView.frame.size.width, ROW_SPACE * rowsCount + 4 * ROW_SPACE);
     [self tileViews];
 }
 
 - (void)determineCurrentRow
 {
     CGFloat delta = contentView.contentOffset.y;
-    int position = round(delta / 39.0);
+    int position = round(delta / ROW_SPACE);
     currentRow = position;
-    [contentView setContentOffset:CGPointMake(0.0, 39.0 * position) animated:YES];
+    [contentView setContentOffset:CGPointMake(0.0, ROW_SPACE * position + CONTENT_OFFSET_Y) animated:YES];
     [delegate pickerView:self didSelectRow:currentRow];
 }
 
@@ -139,7 +155,7 @@
 {
     UITapGestureRecognizer *tapRecognizer = (UITapGestureRecognizer *)sender;
     CGPoint point = [tapRecognizer locationInView:self];
-    int steps = floor(point.y / 39) - 2;
+    int steps = floor(point.y / ROW_SPACE) - 2;
     [self makeSteps:steps];
 }
 
@@ -148,7 +164,7 @@
     if (steps == 0 || steps > 2 || steps < -2)
         return;
 
-    [contentView setContentOffset:CGPointMake(0.0, 39.0 * currentRow) animated:NO];
+    [contentView setContentOffset:CGPointMake(0.0, ROW_SPACE * currentRow) animated:NO];
 
     int newRow = currentRow + steps;
     if (newRow < 0 || newRow >= rowsCount)
@@ -162,7 +178,7 @@
     }
 
     currentRow = currentRow + steps;
-    [contentView setContentOffset:CGPointMake(0.0, 39.0 * currentRow) animated:YES];
+    [contentView setContentOffset:CGPointMake(0.0, ROW_SPACE * currentRow) animated:YES];
     [delegate pickerView:self didSelectRow:currentRow];
 }
 
@@ -182,7 +198,7 @@
     BOOL foundPage = NO;
     for (UIView *aView in visibleViews)
     {
-        int viewIndex = aView.frame.origin.y / 39.0 - 2;
+        int viewIndex = aView.frame.origin.y / ROW_SPACE - 2;
         if (viewIndex == index)
         {
             foundPage = YES;
@@ -196,15 +212,15 @@
 {
     // Calculate which pages are visible
     CGRect visibleBounds = contentView.bounds;
-    int firstNeededViewIndex = floorf(CGRectGetMinY(visibleBounds) / 39.0) - 2;
-    int lastNeededViewIndex  = floorf((CGRectGetMaxY(visibleBounds) / 39.0)) - 2;
+    int firstNeededViewIndex = floorf(CGRectGetMinY(visibleBounds) / ROW_SPACE) - 2;
+    int lastNeededViewIndex  = floorf((CGRectGetMaxY(visibleBounds) / ROW_SPACE)) - 2;
     firstNeededViewIndex = MAX(firstNeededViewIndex, 0);
     lastNeededViewIndex  = MIN(lastNeededViewIndex, rowsCount - 1);
 
     // Recycle no-longer-visible pages 
     for (UIView *aView in visibleViews)
     {
-        int viewIndex = aView.frame.origin.y / 39 - 2;
+        int viewIndex = aView.frame.origin.y / ROW_SPACE - 2;
         if (viewIndex < firstNeededViewIndex || viewIndex > lastNeededViewIndex)
         {
             [recycledViews addObject:aView];
@@ -223,7 +239,7 @@
 
             if (label == nil)
             {
-                label = [[UILabel alloc] initWithFrame:CGRectMake(_rowIndent, 0, self.frame.size.width - _rowIndent, 39.0)];
+                label = [[UILabel alloc] initWithFrame:CGRectMake(_rowIndent, 0, self.frame.size.width - _rowIndent, ROW_SPACE)];
                 label.backgroundColor = [UIColor clearColor];
                 label.font = self.rowFont;
                 label.textColor = RGBACOLOR(0.0, 0.0, 0.0, 0.75);
@@ -241,9 +257,23 @@
     UILabel *label = (UILabel *)view;
     label.text = [dataSource pickerView:self titleForRow:index];
     CGRect frame = label.frame;
-    frame.origin.y = 39.0 * index + 78.0;
+    frame.origin.y = ROW_SPACE * index + 78.0;
     label.frame = frame;
 }
+
+#pragma mark - Picker Trigger
+- (void)hidePicker {
+    [UIView animateWithDuration:0.3 animations:^(void) {
+        self.frame = CGRectMake(0, self.frame.origin.y + self.frame.size.height, self.frame.size.width, self.frame.size.height);
+    }];
+}
+
+- (void)showPicker {
+    [UIView animateWithDuration:0.3 animations:^(void) {
+        self.frame = CGRectMake(0, self.frame.origin.y - self.frame.size.height, self.frame.size.width, self.frame.size.height);
+    }];
+}
+
 
 #pragma mark - UIScrollViewDelegate
 

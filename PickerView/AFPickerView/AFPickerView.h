@@ -5,57 +5,67 @@
 @protocol AFPickerViewDataSource;
 @protocol AFPickerViewDelegate;
 
-@interface AFPickerView : UIView <UIScrollViewDelegate>
-{
+@interface AFPickerView : UIView <UIScrollViewDelegate> {
     __unsafe_unretained id <AFPickerViewDataSource> dataSource;
     __unsafe_unretained id <AFPickerViewDelegate> delegate;
     UIScrollView *contentView;
     UIImageView *glassImageView;
-    
+
     int currentRow;
-    int rowsCount; 
-    
+    int rowsCount;
+
     CGPoint previousOffset;
     BOOL isScrollingUp;
-    
+
     // recycling
     NSMutableSet *recycledViews;
     NSMutableSet *visibleViews;
-    
+
     UIFont *_rowFont;
     CGFloat _rowIndent;
 }
 
-@property (nonatomic, unsafe_unretained) id <AFPickerViewDataSource> dataSource;
-@property (nonatomic, unsafe_unretained) id <AFPickerViewDelegate> delegate;
-@property (nonatomic, unsafe_unretained) int selectedRow;
-@property (nonatomic, strong) UIFont *rowFont;
-@property (nonatomic, unsafe_unretained) CGFloat rowIndent;
+@property(nonatomic, unsafe_unretained) id <AFPickerViewDataSource> dataSource;
+@property(nonatomic, unsafe_unretained) id <AFPickerViewDelegate> delegate;
+@property(nonatomic, unsafe_unretained) int selectedRow;
+@property(nonatomic, strong) UIFont *rowFont;
+@property(nonatomic, unsafe_unretained) CGFloat rowIndent;
 
 - (id)initWithFrame:(CGRect)frame backgroundImage:(NSString *)backgroundImage shadowImage:(NSString *)shadowImage glassImage:(NSString *)glassImage;
+
 - (void)setup;
+
 - (void)reloadData;
+
 - (void)determineCurrentRow;
+
 - (void)didTap:(id)sender;
+
 - (void)makeSteps:(int)steps;
 
 // recycle queue
 - (UIView *)dequeueRecycledView;
+
 - (BOOL)isDisplayingViewForIndex:(NSUInteger)index;
+
 - (void)tileViews;
+
 - (void)configureView:(UIView *)view atIndex:(NSUInteger)index;
 
-@end
+- (void)hidePicker;
 
+- (void)showPicker;
+
+@end
 
 
 @protocol AFPickerViewDataSource <NSObject>
 
 - (NSInteger)numberOfRowsInPickerView:(AFPickerView *)pickerView;
+
 - (NSString *)pickerView:(AFPickerView *)pickerView titleForRow:(NSInteger)row;
 
 @end
-
 
 
 @protocol AFPickerViewDelegate <NSObject>
