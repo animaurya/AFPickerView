@@ -1,4 +1,3 @@
-#import <CoreGraphics/CoreGraphics.h>
 #import "AFPickerView.h"
 
 #define RGBACOLOR(r,g,b,a) [UIColor colorWithRed:(r)/255.0 green:(g)/255.0 blue:(b)/255.0 alpha:(a)]
@@ -17,7 +16,7 @@
 @synthesize rowFont = _rowFont;
 @synthesize rowIndent = _rowIndent;
 
-#pragma mark - Custom getters/setters4
+#pragma mark - Custom getters/setters
 
 - (void)setSelectedRow:(int)selectedRow
 {
@@ -140,7 +139,7 @@
 
     rowsCount = [dataSource numberOfRowsInPickerView:self];
     [contentView setContentOffset:CGPointMake(0.0, CONTENT_OFFSET_Y) animated:NO];
-    contentView.contentSize = CGSizeMake(contentView.frame.size.width, ROW_SPACE * rowsCount + 4 * ROW_SPACE);
+    contentView.contentSize = CGSizeMake(contentView.frame.size.width, ROW_SPACE * rowsCount + 3 * ROW_SPACE);
     [self tileViews];
 }
 
