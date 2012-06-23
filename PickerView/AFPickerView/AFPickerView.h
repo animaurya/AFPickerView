@@ -10,7 +10,6 @@
     __unsafe_unretained id <AFPickerViewDelegate> delegate;
     UIScrollView *contentView;
 
-    int currentRow;
     int rowsCount;
 
     CGPoint previousOffset;
@@ -20,8 +19,6 @@
     NSMutableSet *recycledViews;
     NSMutableSet *visibleViews;
 
-    UIFont *_rowFont;
-    CGFloat _rowIndent;
 }
 
 @property(nonatomic, unsafe_unretained) id <AFPickerViewDataSource> dataSource;

@@ -18,14 +18,7 @@
 
 @implementation AFPickerView
 
-#pragma mark - Synthesization
-
-@synthesize dataSource;
-@synthesize delegate;
-@synthesize isHidden;
-@synthesize selectedRow = currentRow;
-@synthesize rowFont = _rowFont;
-@synthesize rowIndent = _rowIndent;
+@synthesize dataSource, delegate, isHidden, selectedRow, rowFont, rowIndent;
 
 #pragma mark - Custom getters/setters
 
@@ -34,42 +27,37 @@
     if (selectedRow >= rowsCount)
         return;
 
-    currentRow = selectedRow;
-    [contentView setContentOffset:CGPointMake(0.0, ROW_SPACE * currentRow) animated:NO];
+    [contentView setContentOffset:CGPointMake(0.0, ROW_SPACE * selectedRow) animated:NO];
 }
 
 - (void)setRowFont:(UIFont *)rowFont
 {
-    _rowFont = rowFont;
-
     for (UILabel *aLabel in visibleViews)
     {
-        aLabel.font = _rowFont;
+        aLabel.font = rowFont;
     }
 
     for (UILabel *aLabel in recycledViews)
     {
-        aLabel.font = _rowFont;
+        aLabel.font = rowFont;
     }
 }
 
 - (void)setRowIndent:(CGFloat)rowIndent
 {
-    _rowIndent = rowIndent;
-
     for (UILabel *aLabel in visibleViews)
     {
         CGRect frame = aLabel.frame;
-        frame.origin.x = _rowIndent;
-        frame.size.width = self.frame.size.width - _rowIndent;
+        frame.origin.x = rowIndent;
+        frame.size.width = self.frame.size.width - rowIndent;
         aLabel.frame = frame;
     }
 
     for (UILabel *aLabel in recycledViews)
     {
         CGRect frame = aLabel.frame;
-        frame.origin.x = _rowIndent;
-        frame.size.width = self.frame.size.width - _rowIndent;
+        frame.origin.x = rowIndent;
+        frame.size.width = self.frame.size.width - rowIndent;
         aLabel.frame = frame;
     }
 }
@@ -93,24 +81,19 @@
     return self;
 }
 
-
 - (void)setup
 {
-    _rowFont = [UIFont boldSystemFontOfSize:24.0];
-    _rowIndent = 50.0;
-
-    currentRow = 0;
+    rowFont = [UIFont boldSystemFontOfSize:24.0];
+    rowIndent = 50.0;
+    selectedRow = 0;
     rowsCount = 0;
     visibleViews = [[NSMutableSet alloc] init];
     recycledViews = [[NSMutableSet alloc] init];
 }
 
-#pragma mark - Buisness
-
 - (void)reloadData
 {
-    // empry views
-    currentRow = 0;
+    selectedRow = 0;
     rowsCount = 0;
 
     for (UIView *aView in visibleViews)
@@ -132,9 +115,9 @@
 {
     CGFloat delta = contentView.contentOffset.y;
     int position = round(delta / ROW_SPACE);
-    currentRow = position;
+    selectedRow = position;
     [contentView setContentOffset:CGPointMake(0.0, ROW_SPACE * position + CONTENT_OFFSET_Y) animated:YES];
-    [delegate pickerView:self didSelectRow:currentRow];
+    [delegate pickerView:self didSelectRow:selectedRow];
 }
 
 - (void)didTap:(id)sender
@@ -150,9 +133,9 @@
     if (steps == 0 || steps > 2 || steps < -2)
         return;
 
-    [contentView setContentOffset:CGPointMake(0.0, ROW_SPACE * currentRow) animated:NO];
+    [contentView setContentOffset:CGPointMake(0.0, ROW_SPACE * selectedRow) animated:NO];
 
-    int newRow = currentRow + steps;
+    int newRow = selectedRow + steps;
     if (newRow < 0 || newRow >= rowsCount)
     {
         if (steps == -2)
@@ -163,9 +146,9 @@
         return;
     }
 
-    currentRow = currentRow + steps;
-    [contentView setContentOffset:CGPointMake(0.0, ROW_SPACE * currentRow) animated:YES];
-    [delegate pickerView:self didSelectRow:currentRow];
+    selectedRow = selectedRow + steps;
+    [contentView setContentOffset:CGPointMake(0.0, ROW_SPACE * selectedRow) animated:YES];
+    [delegate pickerView:self didSelectRow:selectedRow];
 }
 
 #pragma mark - recycle queue
@@ -225,7 +208,7 @@
 
             if (label == nil)
             {
-                label = [[UILabel alloc] initWithFrame:CGRectMake(_rowIndent, 0, self.frame.size.width - _rowIndent, ROW_SPACE)];
+                label = [[UILabel alloc] initWithFrame:CGRectMake(rowIndent, 0, self.frame.size.width - rowIndent, ROW_SPACE)];
                 label.backgroundColor = [UIColor clearColor];
                 label.font = self.rowFont;
                 label.textColor = RGBACOLOR(0.0, 0.0, 0.0, 0.75);
@@ -297,7 +280,7 @@
 
 - (UIToolbar *)toolbar:(NSString *)title {
     UIToolbar *toolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width, TOOLBAR_HEIGHT)];
-    toolbar.tintColor = RGBACOLOR(255, 144, 39, 1);
+    toolbar.tintColor = RGBACOLOR(254, 172, 64, 1);
     UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStyleDone target:nil action:@selector(hidePicker)];
     UIBarButtonItem *placeHolderButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
     [toolbar setItems:[NSArray arrayWithObjects:[self toolbarTitleItem:title], placeHolderButton, doneButton, nil]];
